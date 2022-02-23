@@ -10,12 +10,20 @@
                 <input type="checkbox">
                 <p><%=newListItem[x]%></p>
             </div>
+            
         <% } %>
 
         <form class="item" action="/" method="post">
             <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
             <button type="submit" name="button" value=<%= dayInput %>>+</button>
         </form>
+
+        <form class="item" action="/" method="post">
+            <input type="text" name="clearList" placeholder="Clear List" autocomplete="off" disabled>
+            <button type="submit" name="button" value="clear">-</button>
+        </form>
     </div>
+
+    
 
 <%- include("footer") -%>

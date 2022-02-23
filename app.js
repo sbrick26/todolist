@@ -8,8 +8,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-/*let items = [];
-let workItems = [];*/
+
 const url = "mongodb://127.0.0.1:27017/todolistDB";
 
 
@@ -19,6 +18,7 @@ const itemsSchema = new mongoose.Schema({
 const Item = mongoose.model("item", itemsSchema);
 
 main().catch(err => console.log(err));
+
 async function main() {
     
     await mongoose.connect(url);
@@ -50,6 +50,17 @@ async function addItemAsDoc(name) {
     //mongoose.disconnect();
 }
 
+async function clearList() {
+    
+    await mongoose.connect(url);
+
+    Item.deleteMany({}).then(function(){
+        console.log("Data deleted"); // Success
+    }).catch(function(error){
+        console.log(error); // Failure
+    });
+}
+
 let currentDay = date.getDate();
 
 app.get("/", function(req, res){
@@ -67,22 +78,36 @@ app.get("/", function(req, res){
             newListItem: items
         });
     });
-    
-    
-    // res.sendFile(__dirname + "/index.html");
 });
 
 app.post("/", function(req, res){
     
-    if (req.body.button === "Work") {
-        workItems.push(req.body.newItem);
-        res.redirect("/work");
+    if (req.body.button === "clear") {
+        clearList();
+        res.redirect("/");
     } else {
         addItemAsDoc(req.body.newItem).catch(err => console.log(err));
         res.redirect("/");
     }
     
 });
+
+
+
+app.get("/about", function(req, res){
+    res.render("about");
+});
+
+app.listen(3000, function(){
+    console.log("Server started on port 3000");
+
+});
+
+
+
+/*
+let items = [];
+let workItems = [];
 
 app.get("/work", function(req, res){
     res.render('list', {
@@ -95,13 +120,4 @@ app.post("/work", function(req, res){
     workItems.push(req.body.newItem);
 
     res.redirect("/work");
-});
-
-app.get("/about", function(req, res){
-    res.render("about");
-});
-
-app.listen(3000, function(){
-    console.log("Server started on port 3000");
-
-});
+}); */
