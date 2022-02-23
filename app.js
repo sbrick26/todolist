@@ -40,6 +40,12 @@ app.post("/", function(req, res){
     }
 });
 
+app.post("/delete", function(req, res){
+    let itemDelete = req.body.checkbox;
+    database.deleteItem(itemDelete);
+    res.redirect("/");
+});
+
 app.get("/about", function(req, res){
     res.render("about");
 });

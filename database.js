@@ -10,6 +10,7 @@ module.exports.main = main;
 module.exports.getItems = getItems;
 module.exports.addItemAsDoc = addItemAsDoc;
 module.exports.clearList = clearList;
+module.exports.deleteItem = deleteItem;
 
 async function main() {
     
@@ -42,6 +43,17 @@ async function clearList() {
     await mongoose.connect(url);
 
     Item.deleteMany({}).then(function(){
+        console.log("Succesfully deleted"); // Success
+    }).catch(function(error){
+        console.log(error); // Failure
+    });
+}
+
+async function deleteItem(name) {
+    
+    await mongoose.connect(url);
+
+    Item.deleteOne({name: name}).then(function(){
         console.log("Succesfully deleted"); // Success
     }).catch(function(error){
         console.log(error); // Failure

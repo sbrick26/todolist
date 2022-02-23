@@ -6,10 +6,12 @@
     <div class ="box">
         
         <% for (var x = 0; x < newListItem.length; x++){ %>
-            <div class="item">
-                <input type="checkbox">
-                <p><%=newListItem[x]%></p>
-            </div>
+            <form action="/delete" method="post">
+                <div class="item">
+                    <input value="<%=newListItem[x]%>" name="checkbox" type="checkbox" onChange="this.form.submit()">
+                    <p><%=newListItem[x]%></p>
+                </div>
+            </form>
             
         <% } %>
 
