@@ -29,21 +29,58 @@ app.get("/", function(req, res){
     });
 });
 
+app.get("/:customListName", function(req, res){
+    const listName = req.params.customListName;
+    
+    const getData = async () => {
+        let currentList = await database.createList(listName);
+        console.log(currentList);
+
+        let itemsList = []
+        for(let i = 0; i< currentList.items.length; i++){
+            itemsList.push(currentList.items[i].name);
+        }
+        
+        res.render('list', {
+            dayInput: currentList.name,
+            newListItem: itemsList
+        });
+    }
+    getData();
+});
+
 app.post("/", function(req, res){
     
     if (req.body.button === "clear") {
         database.clearList();
         res.redirect("/");
-    } else {
+    } else if (req.body.button === currentDay){
         database.addItemAsDoc(req.body.newItem).catch(err => console.log(err));
         res.redirect("/");
+    } else {
+        console.log(req.body.newItem);
+        console.log("Im here");
+        database.addItemInList(req.body.newItem, req.body.button).catch(err => console.log(err));
+        res.redirect("/" + req.body.button);
     }
 });
 
 app.post("/delete", function(req, res){
+    
     let itemDelete = req.body.checkbox;
-    database.deleteItem(itemDelete);
-    res.redirect("/");
+    let listName = req.body.listName;
+   
+    const deleteData = async() => {
+        await database.deleteItemInList(itemDelete, listName);
+        res.redirect("/" + req.body.listName);
+    }
+    
+    if (listName === currentDay) {
+        database.deleteItem(itemDelete);
+        res.redirect("/");
+    } else {
+        deleteData();
+    }
 });
 
 app.get("/about", function(req, res){

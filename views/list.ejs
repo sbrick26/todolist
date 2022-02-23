@@ -11,6 +11,7 @@
                     <input value="<%=newListItem[x]%>" name="checkbox" type="checkbox" onChange="this.form.submit()">
                     <p><%=newListItem[x]%></p>
                 </div>
+                <input type="hidden" name="listName" value="<%= dayInput %>">
             </form>
             
         <% } %>
@@ -20,10 +21,10 @@
             <button type="submit" name="button" value=<%= dayInput %>>+</button>
         </form>
 
-        <form class="item" action="/" method="post">
+        <% /* %> <form class="item" action="/" method="post">
             <input type="text" name="clearList" placeholder="Clear List" autocomplete="off" disabled>
             <button type="submit" name="button" value="clear">-</button>
-        </form>
+        </form> <% */ %>
     </div>
 
     
