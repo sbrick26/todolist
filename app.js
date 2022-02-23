@@ -1,72 +1,21 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
-const mongoose = require("mongoose");
+const database = require(__dirname + "/database.js")
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-
-const url = "mongodb://127.0.0.1:27017/todolistDB";
-
-
-const itemsSchema = new mongoose.Schema({
-    name: String
-});
-const Item = mongoose.model("item", itemsSchema);
-
-main().catch(err => console.log(err));
-
-async function main() {
-    
-    await mongoose.connect(url);
-
-    console.log("main ran and worked");
-    mongoose.disconnect();
-
-}
-
-async function getItems(){
-    await mongoose.connect(url);
-    let items = await Item.find().select('name -_id');
-    
-    //mongoose.disconnect();
-    return items;
-    
-}
-
-async function addItemAsDoc(name) {
-    await mongoose.connect(url);
-
-    const item = new Item({
-        name: name
-    });
-
-    await item.save();
-    console.log("Successfully Added");
-
-    //mongoose.disconnect();
-}
-
-async function clearList() {
-    
-    await mongoose.connect(url);
-
-    Item.deleteMany({}).then(function(){
-        console.log("Data deleted"); // Success
-    }).catch(function(error){
-        console.log(error); // Failure
-    });
-}
+database.main().catch(err => console.log(err));
 
 let currentDay = date.getDate();
 
 app.get("/", function(req, res){
 
     let items = [];
-    databaseitems = getItems().catch(err => console.log(err));
+    databaseitems = database.getItems().catch(err => console.log(err));
     databaseitems.then(function(result){
         for (let i = 0; i<result.length; i++) {
             items.push(result[i].name);
@@ -83,16 +32,13 @@ app.get("/", function(req, res){
 app.post("/", function(req, res){
     
     if (req.body.button === "clear") {
-        clearList();
+        database.clearList();
         res.redirect("/");
     } else {
-        addItemAsDoc(req.body.newItem).catch(err => console.log(err));
+        database.addItemAsDoc(req.body.newItem).catch(err => console.log(err));
         res.redirect("/");
     }
-    
 });
-
-
 
 app.get("/about", function(req, res){
     res.render("about");
